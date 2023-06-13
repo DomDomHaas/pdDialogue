@@ -1,0 +1,57 @@
+{
+  "characters": [
+    "eddie", "fritz", "monk"
+  ],
+  "chapters": [
+    {
+      "name": "act one",
+      "dialogues": [
+        {
+          "id": "questionHash",
+          "character": "eddie",
+          "text": "What do you think we should do now?",
+          "options": [
+            {
+              "id": "nothingHash",
+              "text": "Nothing"
+            },
+            {
+              "id": "shoppingHash",
+              "text": "Go shopping"
+            }
+          ]
+        },
+        {
+          "id": "shoppingHash",
+          "character": "fritz",
+          "text": "Naahh... I don't want to go shopping, I wanna play games!",
+          "options": [
+            {
+              "id": "answerNothing",
+              "text": "I want to do nothing",
+              "next": "nothingHash"
+            },
+            {
+              "id": "answerChill",
+              "text": "Let's chill!",
+              "next": "chillHash"
+            }
+          ]
+        },
+        {
+          "id": "nothingHash",
+          "character": "fritz",
+          "text": "What nothing... But I wanna do something!",
+          "next": "questionHash"
+        },
+        {
+          "id": "chillHash",
+          "character": "monk",
+          "text": "Uuuhhh I did I hear chill? I'm just the dude for it!",
+          "options": [
+          ]
+        }
+      ]
+    }
+  ]
+}
