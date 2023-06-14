@@ -1,9 +1,15 @@
 <template>
   <div class="pa-0"
-       style="display: flex;">
+       style="display: flex; border: 1px white solid;">
 
     <div class="ma-2" style="display: flex;">
-      Chapter: {{ name }}
+      <v-text-field :model-value="name"
+                    label="Chapter"
+                    hide-details
+                    density="compact"
+                    variant="outlined"
+                    class="pa-1">
+      </v-text-field>
 
       <v-btn :icon="expanded ? 'mdi-chevron-down' : 'mdi-chevron-left'"
              density="compact"

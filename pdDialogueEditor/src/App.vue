@@ -2,7 +2,7 @@
   <div class="mainGrid">
     <div>Navigation?</div>
 
-    <div style="/* height: 700px; width: 100%; */ border: 1px solid white;" >
+    <div style="/* height: 700px; width: 100%; border: 1px solid white; */" >
 
       <div v-for="(chapter, index) of dialogueList.chapters" >
         <DialogueChapter :name="chapter.name"
@@ -21,6 +21,8 @@
 import DialogueChapter from '@/components/DialogueChapter.vue'
 import DialogueChapterAdd from '@/components/DialogueChapterAdd.vue'
 
+import jsonDialogues from './dialogueTest.json';
+
 export default {
   mounted() {
   },
@@ -29,90 +31,107 @@ export default {
     DialogueChapterAdd,
   },
   computed: {
-    chapters() {
-      return this.dialogueList.chapters[0];
-    },
     dialogueList () {
-/*
-      return this.dialogueTest;
-*/
-
-      return {
-        "characters": [
-          "eddie", "fritz", "monk"
-        ],
-        "chapters": [
-          {
-            "name": "act one",
-            "dialogues": [
-              {
-                "id": "questionHash",
-                "character": "eddie",
-                "text": "What do you think we should do now?",
-                "options": [
-                  {
-                    "id": "nothingHash",
-                    "text": "Nothing"
-                  },
-                  {
-                    "id": "shoppingHash",
-                    "text": "Go shopping"
-                  }
-                ]
-              },
-              {
-                "id": "shoppingHash",
-                "character": "fritz",
-                "text": "Naahh... I don't want to go shopping, I wanna play games!",
-                "options": [
-                  {
-                    "id": "answerNothing",
-                    "text": "I want to do nothing",
-                    "next": "questionHash"
-                  },
-                  {
-                    "id": "answerChill",
-                    "text": "Let's chill!",
-                    "next": "chillHash"
-                  }
-                ]
-              },
-              /*
-                            {
-                              "id": "nothingHash",
-                              "character": "fritz",
-                              "text": "What nothing... But I wanna do something!",
-                              "next": "questionHash"
-                            },
-                            {
-                              "id": "chillHash",
-                              "character": "monk",
-                              "text": "Uuuhhh I did I hear chill? I'm just the dude for it!",
-                              "options": [
-                              ]
-                            }
-              */
-            ]
-          }
-        ]
-      };
-
+      return this.jsonDialogues;
     }
   },
   methods: {
+    catchClearItem(itemTitle) {
+
+    },
     catchAddItem(parent) {
       console.log('catchAddItem');
-      console.log(parent)
+      const listItem = this.getDialoguItemFromChapters(this.dialogueList.chapters, parent);
+      this.addItemOption(listItem);
     },
     catchAddChapter(parent) {
-      console.log('catchAddChapter');
-      console.log(parent)
+      this.addChapter(this.dialogueList.chapters);
+    },
+    addChapter(chapterList) {
+      if (!chapterList) {
+        chapterList = [];
+      }
+
+      const newChapter = {
+        name: '',
+      };
+
+      this.addDialogue(newChapter);
+      
+      chapterList.push(newChapter)
+    },
+    addDialogue(chapter) {
+      if (!chapter) {
+        return;
+      }
+
+      if (!chapter.dialogues) {
+        chapter.dialogues = [];
+      }
+
+      chapter.dialogues.push({
+        id: '',
+        character: '',
+        text: '',
+        options: [],
+      })
+    },
+    addItemOption(item) {
+      if (!item) {
+        return;
+      }
+
+      if (!item.options) {
+        item.options = [];
+      }
+
+      item.options.push({
+        id: '',
+        text: '',
+        next: ''
+      })
+    },
+    getDialoguItemFromChapters(chapters, item) {
+      if (!chapters) {
+        return null;
+      }
+
+      for (let i = 0; i < chapters.length; i++) {
+        const chapter = chapters[i];
+
+        const listItem = this.getDialogueItem(chapter.dialogues, item);
+        if (listItem) {
+          return listItem;
+        }
+      }
+
+      return null;
+    },
+    getDialogueItem(list, item) {
+      if (!list) {
+        return null;
+      }
+
+      for (let i = 0; i < list.length; i++) {
+        const listItem = list[i];
+
+        if (listItem.id === item) {
+          return listItem;
+        }
+
+        if (listItem.options?.length > 0) {
+          const subItem = this.getDialogueItem(listItem.options, item);
+          if (subItem) {
+            return subItem;
+          }
+        }
+      }
+
+      return null;
     },
   },
   data: () => ({
-/*
-    dialogueTest,
-*/
+    jsonDialogues,
   }),
 };
 </script>
