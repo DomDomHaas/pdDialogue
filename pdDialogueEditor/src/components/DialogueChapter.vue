@@ -1,4 +1,56 @@
 <template>
+  <v-container :fluid="true"
+               class="pa-2"
+               style="border: 1px white solid;"
+               >
+    <v-row style="align-items: center;">
+      <v-col cols="10"
+             class="flex-grow-1 flex-shrink-1">
+        <v-text-field :model-value="name"
+                      label="Chapter"
+                      hide-details
+                      density="compact"
+                      class="pa-1">
+        </v-text-field>
+      </v-col>
+
+      <v-col class="flex-grow-0">
+        <v-btn :icon="expanded ? 'mdi-chevron-down' : 'mdi-chevron-left'"
+               density="compact"
+               @click="expanded = !expanded" >
+        </v-btn>
+      </v-col>
+
+      <v-col class="flex-grow-0 ml-5">
+        <v-btn icon="mdi-plus-box-multiple"
+               density="compact"
+               @click="$emit('addChapterItem', name)" >
+        </v-btn>
+      </v-col>
+      <v-col >
+        Add New Dialogue
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <ul v-if="expanded"
+          v-for="(dialogue, index) of dialogues"
+          :id="`tree_${index}`"
+          style="display: flex;"
+          class="tf-tree tf-gap-sm">
+
+        <dialogue-item :title="dialogue.id"
+                       :text="dialogue.text"
+                       :next="dialogue.next"
+                       :children="dialogue.options"
+                       :key="`tree_${index}`"
+                       @addItem="catchAddItem"
+        />
+      </ul>
+    </v-row>
+  </v-container>
+
+<!--
   <div class="pa-0"
        style="display: flex; border: 1px white solid;">
 
@@ -40,6 +92,7 @@
     </ul>
 
   </div>
+-->
 
 </template>
 

@@ -1,4 +1,38 @@
 <template>
+
+  <v-container :fluid="true"
+                class="pa-4">
+    <v-row>
+      Navigation?
+    </v-row>
+
+    <v-row v-for="(chapter, index) of dialogueList.chapters"
+            :key="index" >
+
+      <v-col cols="12">
+        <DialogueChapter :name="chapter.name"
+                         :dialogues="chapter.dialogues"
+                         @addItem="catchAddItem"
+                         @addChapterItem="catchAddChapterItem" />
+      </v-col>
+    </v-row>
+
+    <v-row style="align-items: center;">
+      <v-col class="flex-shrink-1 flex-grow-0">
+        <v-btn icon="mdi-book-plus"
+               @click="catchAddChapter"
+               density="comfortable">
+        </v-btn>
+      </v-col>
+
+      <v-col class="flex-grow-1">
+        Add New Chapter
+      </v-col>
+    </v-row>
+
+  </v-container>
+
+<!--
   <div class="mainGrid">
     <div>Navigation?</div>
 
@@ -15,11 +49,11 @@
     <DialogueChapterAdd @addChapter="catchAddChapter" />
 
   </div>
+-->
 </template>
 
 <script>
 import DialogueChapter from '@/components/DialogueChapter.vue'
-import DialogueChapterAdd from '@/components/DialogueChapterAdd.vue'
 
 import jsonDialogues from './dialogueTest.json';
 
@@ -28,7 +62,6 @@ export default {
   },
   components: {
     DialogueChapter,
-    DialogueChapterAdd,
   },
   computed: {
     dialogueList () {
@@ -46,6 +79,12 @@ export default {
     },
     catchAddChapter(parent) {
       this.addChapter(this.dialogueList.chapters);
+    },
+    catchAddChapterItem(chapterName) {
+      const chapter = this.dialogueList.chapters.filter((c) => c.name === chapterName)[0] || null;
+      if (chapter) {
+        this.addDialogue(chapter);
+      }
     },
     addChapter(chapterList) {
       if (!chapterList) {

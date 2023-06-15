@@ -1,14 +1,11 @@
 <template>
-  <li class="ma-1 pa-0">
-
-    <div class="tf-nc pa-1 shrink" >
-      <v-btn icon="mdi-plus-box"
-             @click="$emit('addItem')"
-             density="comfortable">
-      </v-btn>
-    </div>
-
-  </li>
+  <div class="tf-nc pa-1 shrink" >
+    <v-btn icon="mdi-plus-box"
+           @click="$emit('addItem')"
+           size="small"
+           density="comfortable">
+    </v-btn>
+  </div>
 </template>
 
 <script>

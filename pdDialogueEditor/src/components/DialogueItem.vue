@@ -19,7 +19,7 @@
       <v-container class="pa-1"
                    :fluid="true" >
 
-      <div style="position: absolute; right: 0; top: 0; z-index: 10;"
+      <div style="position: absolute; right: -5px; top: -5px; z-index: 10;"
             class="px-1">
         <v-btn class="ma-0"
                  icon="mdi-close"
@@ -34,10 +34,10 @@
              style="align-items: center;">
         <v-col class="grow pa-0">
           <v-text-field :model-value="title"
-                        label="Title"
+                        label="Dialogue Title"
                         hide-details
                         density="compact"
-                        variant="outlined"
+                        variant="underlined"
                         class="pa-1">
           </v-text-field>
         </v-col>
@@ -70,6 +70,15 @@
         </v-col>
       </v-row>
 
+      <div style="position: absolute; right: -5px; bottom: -5px; z-index: 10;"
+           class="pa-1">
+        <v-btn icon="mdi-plus-box"
+               @click="$emit('addItem', title)"
+               size="small"
+               density="comfortable">
+        </v-btn>
+      </div>
+
       </v-container>
 
     </div>
@@ -87,7 +96,11 @@
                      @clearItem="catchClearItem(dialogue.id)"
       />
 
-      <DialogueItemAdd @addItem="catchAddItem(title)" />
+<!--
+      <li class="ma-1 pa-0">
+        <DialogueItemAdd @addItem="catchAddItem(title)" />
+      </li>
+-->
 
     </ul>
 

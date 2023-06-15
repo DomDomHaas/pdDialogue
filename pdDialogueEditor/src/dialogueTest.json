@@ -16,8 +16,9 @@
               "text": "Nothing"
             },
             {
-              "id": "shoppingHash",
-              "text": "Go shopping"
+              "id": "goShoppingHash",
+              "text": "Go shopping",
+              "next": "shoppingHash"
             }
           ]
         },
