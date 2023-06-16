@@ -2,34 +2,18 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 
 ```sh
-pnpm install
+1) clone: https://github.com/DomDomHaas/pdDialogue/tree/feature/editor
+2) navigate into the dpDialogueEditor folder
+2) a) install node.js
+2) b) install pnpm with command: npm install -g pnpm
+3) pnpm install
+4) pnpm dev
+5) open browser with on the http://localhost:5174/
+(this is the default port, check if the console shows you a different port)
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
-pnpm dev
-```
-
-### Compile and Minify for Production
-
-```sh
-pnpm build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
