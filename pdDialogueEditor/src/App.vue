@@ -1,11 +1,9 @@
 <template>
   <v-layout>
     <v-app-bar color="gray">
-<!--
       <template v-slot:prepend>
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon><img src="./assets/icon.png" alt="playdate icon"/></v-app-bar-nav-icon>
       </template>
--->
 
       <v-app-bar-title>Playdate Dialogue Editor</v-app-bar-title>
 
