@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
+    "browser-fs-access": "^0.34.1",
     "treeflex": "^2.0.1",
     "vue": "^3.3.2",
-    "vuetify": "^3.3.2"
+    "vuetify": "^3.3.3"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",

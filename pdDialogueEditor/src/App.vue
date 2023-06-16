@@ -1,177 +1,117 @@
 <template>
-
-  <v-container :fluid="true"
-                class="pa-4">
-    <v-row>
-      Navigation?
-    </v-row>
-
-    <v-row v-for="(chapter, index) of dialogueList.chapters"
-            :key="index" >
-
-      <v-col cols="12">
-        <DialogueChapter :name="chapter.name"
-                         :dialogues="chapter.dialogues"
-                         @addItem="catchAddItem"
-                         @addChapterItem="catchAddChapterItem" />
-      </v-col>
-    </v-row>
-
-    <v-row style="align-items: center;">
-      <v-col class="flex-shrink-1 flex-grow-0">
-        <v-btn icon="mdi-book-plus"
-               @click="catchAddChapter"
-               density="comfortable">
-        </v-btn>
-      </v-col>
-
-      <v-col class="flex-grow-1">
-        Add New Chapter
-      </v-col>
-    </v-row>
-
-  </v-container>
-
+  <v-layout>
+    <v-app-bar color="gray">
 <!--
-  <div class="mainGrid">
-    <div>Navigation?</div>
-
-    <div style="/* height: 700px; width: 100%; border: 1px solid white; */" >
-
-      <div v-for="(chapter, index) of dialogueList.chapters" >
-        <DialogueChapter :name="chapter.name"
-                          :dialogues="chapter.dialogues"
-                         @addItem="catchAddItem" />
-      </div>
-
-    </div>
-
-    <DialogueChapterAdd @addChapter="catchAddChapter" />
-
-  </div>
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      </template>
 -->
+
+      <v-app-bar-title>Playdate Dialogue Editor</v-app-bar-title>
+
+      <template v-slot:append>
+        <v-btn icon="mdi-file-upload"
+                @click="openFile" />
+        <v-btn icon="mdi-content-save"
+                @click="saveFile"/>
+      </template>
+    </v-app-bar>
+
+    <v-main >
+      <v-container fluid="" >
+        <v-row>
+          <v-col>
+            <v-icon>mdi-information</v-icon> Create dialogue trees, save it and import it into your PlayDate game! Todo: make this info clickable to expand info about usage! Todo: add character list on top & dialogues can have character tags
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col>
+            <DialogueMain :dialogueList="jsonDialogues"
+                          @listUpdate="catchListUpdate"/>
+
+          </v-col>
+        </v-row>
+
+      </v-container>
+
+      <v-snackbar v-model="showError" >
+        {{ fileError }}
+        <br />
+        <br />
+        Make sure you have select a valid JSON file.
+      </v-snackbar>
+    </v-main>
+  </v-layout>
+
 </template>
 
 <script>
-import DialogueChapter from '@/components/DialogueChapter.vue'
-
-import jsonDialogues from './dialogueTest.json';
+import DialogueMain from '@/components/DialogueMain.vue'
+import {fileOpen, fileSave} from "browser-fs-access";
 
 export default {
   mounted() {
   },
-  components: {
-    DialogueChapter,
-  },
   computed: {
-    dialogueList () {
-      return this.jsonDialogues;
-    }
   },
   methods: {
-    catchClearItem(itemTitle) {
+    catchListUpdate(list) {
+      this.jsonDialogues = list;
+    },
+    async saveFile() {
+      this.fileError = null;
+      this.showError = false;
+
+      try {
+        const content = JSON.stringify(this.jsonDialogues);
+        const blob = new Blob([content], {
+          type: "application/json",
+        });
+
+        const defaultFileName = `pdDialog_${Date.now()}.json`;
+
+        await fileSave(blob, {
+          fileName: defaultFileName,
+          extensions: ['.json'],
+        });
+
+      } catch (e) {
+        this.fileError = e;
+        this.showError = true
+      }
 
     },
-    catchAddItem(parent) {
-      console.log('catchAddItem');
-      const listItem = this.getDialoguItemFromChapters(this.dialogueList.chapters, parent);
-      this.addItemOption(listItem);
-    },
-    catchAddChapter(parent) {
-      this.addChapter(this.dialogueList.chapters);
-    },
-    catchAddChapterItem(chapterName) {
-      const chapter = this.dialogueList.chapters.filter((c) => c.name === chapterName)[0] || null;
-      if (chapter) {
-        this.addDialogue(chapter);
-      }
-    },
-    addChapter(chapterList) {
-      if (!chapterList) {
-        chapterList = [];
-      }
+    async openFile() {
+      this.fileError = null;
+      this.showError = false;
 
-      const newChapter = {
-        name: '',
-      };
+      try {
 
-      this.addDialogue(newChapter);
-      
-      chapterList.push(newChapter)
-    },
-    addDialogue(chapter) {
-      if (!chapter) {
-        return;
+        const jsonFile = await fileOpen([{
+          description: 'JSON files',
+          extensions: ['.json'],
+          multiple: false,
+        }]);
+
+        const text = await jsonFile.text()
+
+        this.jsonDialogues = JSON.parse(text);
+      } catch (e) {
+        this.fileError = e;
+        this.showError = true
       }
 
-      if (!chapter.dialogues) {
-        chapter.dialogues = [];
-      }
-
-      chapter.dialogues.push({
-        id: '',
-        character: '',
-        text: '',
-        options: [],
-      })
-    },
-    addItemOption(item) {
-      if (!item) {
-        return;
-      }
-
-      if (!item.options) {
-        item.options = [];
-      }
-
-      item.options.push({
-        id: '',
-        text: '',
-        next: ''
-      })
-    },
-    getDialoguItemFromChapters(chapters, item) {
-      if (!chapters) {
-        return null;
-      }
-
-      for (let i = 0; i < chapters.length; i++) {
-        const chapter = chapters[i];
-
-        const listItem = this.getDialogueItem(chapter.dialogues, item);
-        if (listItem) {
-          return listItem;
-        }
-      }
-
-      return null;
-    },
-    getDialogueItem(list, item) {
-      if (!list) {
-        return null;
-      }
-
-      for (let i = 0; i < list.length; i++) {
-        const listItem = list[i];
-
-        if (listItem.id === item) {
-          return listItem;
-        }
-
-        if (listItem.options?.length > 0) {
-          const subItem = this.getDialogueItem(listItem.options, item);
-          if (subItem) {
-            return subItem;
-          }
-        }
-      }
-
-      return null;
     },
   },
   data: () => ({
-    jsonDialogues,
+    jsonDialogues: null,
+    fileError: null,
+    showError: false,
   }),
+  components: {
+    DialogueMain,
+  },
 };
 </script>
 

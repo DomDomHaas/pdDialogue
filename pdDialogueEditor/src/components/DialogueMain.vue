@@ -1,0 +1,221 @@
+<template>
+  <v-container :fluid="true"
+               class="pa-4">
+
+    <v-row v-if="!myList"
+           align="center"
+    >
+      <v-col cols="12" class="flex-grow-0 flex-shrink-0">
+        No Dialogues yet! Start with adding a chapter
+      </v-col>
+    </v-row>
+
+    <v-row v-if="myList"
+           v-for="(chapter, index) of chapters"
+           :key="index"
+            style="flex-wrap: nowrap;" >
+
+      <v-col cols="12" class="flex-shrink-0 flex-grow-1">
+        <DialogueChapter :id="chapter.id"
+                         :name="chapter.name"
+                         :dialogues="chapter.dialogues"
+                         @addItem="catchAddItem"
+                         @addChapterItem="catchAddChapterItem"
+                         @changeChapterProperty="catchChapterPropertyChange"
+                         @changeProperty="catchPropertyChange" />
+      </v-col>
+    </v-row>
+
+    <v-row align="center" >
+
+      <v-col class="flex-shrink-1 flex-grow-0">
+        <v-btn icon="mdi-book-plus"
+               @click="catchAddChapter"
+               density="comfortable">
+        </v-btn>
+      </v-col>
+
+      <v-col class="flex-grow-1 flex-shrink-0"
+              cols="3">
+        Add New Chapter
+      </v-col>
+    </v-row>
+
+  </v-container>
+
+</template>
+<script>
+import {defineComponent} from 'vue'
+import DialogueChapter from "@/components/DialogueChapter.vue";
+/*
+import jsonDialogues from "@/../public/dialogueTest.json";
+*/
+
+export default defineComponent({
+  name: "DialogueMain",
+  props: {
+    dialogueList: Object,
+  },
+  computed: {
+    chapters() {
+      return this.myList.chapters;
+    },
+  },
+  watch: {
+    dialogueList() {
+      this.myList = this.dialogueList || { chapters: [] };
+    }
+  },
+  methods: {
+    catchClearItem(itemTitle) {
+
+      this.$emit('listUpdate', this.myList);
+    },
+    catchAddItem({ chapterName, id, title }) {
+
+      const listItem = this.getDialogueItemFromChapters(this.chapters, chapterName, id, title);
+      this.addItemOption(listItem);
+
+      this.$emit('listUpdate', this.myList);
+    },
+    catchAddChapter() {
+      if (this.myList === null) {
+        this.myList = { chapters: [] };
+      }
+
+      this.addChapter(this.chapters);
+
+      this.$emit('listUpdate', this.myList);
+    },
+    catchAddChapterItem(chapterName) {
+      const chapter = this.chapters.filter((c) => c.name === chapterName)[0] || null;
+      if (chapter) {
+        this.addDialogue(chapter);
+        this.$emit('listUpdate', this.myList);
+      }
+    },
+    catchPropertyChange({ id,
+                          title,
+                          property,
+                          oldValue,
+                          newValue,
+                          chapterName,
+                        }) {
+
+      const listItem = this.getDialogueItemFromChapters(this.myList.chapters, chapterName, id, title);
+      if (listItem) {
+        listItem[property] = newValue;
+        this.$emit('listUpdate', this.myList);
+      }
+    },
+    catchChapterPropertyChange({ id,
+                                 chapterName,
+                                 property,
+                                 oldValue,
+                                 newValue,
+                               }) {
+
+      const chapter = this.chapters.filter((c) => c.id === id && c.name === chapterName)[0] || null;
+      if (chapter) {
+        chapter[property] = newValue;
+        this.$emit('listUpdate', this.myList);
+      }
+    },
+    addChapter(chapterList) {
+      if (!chapterList) {
+        chapterList = [];
+      }
+
+      const newChapter = {
+        id: chapterList.length,
+        name: '',
+      };
+
+      this.addDialogue(newChapter);
+
+      chapterList.push(newChapter)
+    },
+    addDialogue(chapter) {
+      if (!chapter) {
+        return;
+      }
+
+      if (!chapter.dialogues) {
+        chapter.dialogues = [];
+      }
+
+      chapter.dialogues.push({
+        id: chapter.dialogues.length,
+        title: '',
+        character: '',
+        text: '',
+        options: [],
+      })
+    },
+    addItemOption(item) {
+      if (!item) {
+        return;
+      }
+
+      if (!item.options) {
+        item.options = [];
+      }
+
+      item.options.push({
+        id: item.options.length,
+        title: '',
+        text: '',
+        next: ''
+      })
+    },
+    getDialogueItemFromChapters(chapters, chapterName, id, itemTitle) {
+      if (!chapters) {
+        return null;
+      }
+
+      const chapter = chapters.filter((c) => c.name === chapterName)[0] || null;
+
+      if (chapter) {
+        const listItem = this.getDialogueItem(chapter.dialogues, id, itemTitle);
+        if (listItem) {
+          return listItem;
+        }
+
+      } else {
+        console.error(`getDialogueItemFromChapters: Chapter not found ${chapterName}`);
+      }
+
+      return null;
+    },
+    getDialogueItem(list, id, itemTitle) {
+      if (!list) {
+        return null;
+      }
+
+      for (let i = 0; i < list.length; i++) {
+        const listItem = list[i];
+        if (listItem.id === id && listItem.title === itemTitle) {
+          return listItem;
+        }
+
+        if (listItem.options?.length > 0) {
+          const subItem = this.getDialogueItem(listItem.options, id, itemTitle);
+          if (subItem) {
+            return subItem;
+          }
+        }
+      }
+
+      return null;
+    },
+  },
+  data: () => ({
+    myList: null,
+  }),
+  components: { DialogueChapter },
+})
+</script>
+
+<style scoped>
+
+</style>

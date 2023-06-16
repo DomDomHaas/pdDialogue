@@ -8,6 +8,9 @@ dependencies:
   '@mdi/font':
     specifier: ^7.2.96
     version: 7.2.96
+  browser-fs-access:
+    specifier: ^0.34.1
+    version: 0.34.1
   treeflex:
     specifier: ^2.0.1
     version: 2.0.1
@@ -15,8 +18,8 @@ dependencies:
     specifier: ^3.3.2
     version: 3.3.2
   vuetify:
-    specifier: ^3.3.2
-    version: 3.3.2(vue@3.3.2)
+    specifier: ^3.3.3
+    version: 3.3.3(vue@3.3.2)
 
 devDependencies:
   '@rushstack/eslint-patch':
@@ -502,6 +505,10 @@ packages:
       balanced-match: 1.0.2
       concat-map: 0.0.1
     dev: true
+
+  /browser-fs-access@0.34.1:
+    resolution: {integrity: sha512-HPaRf2yimp8kWSuWJXc8Mi78dPbDzfduA+Gyq14H4jlMvd6XNfIRm36Y2yRLaa4x0gwcGuepj4zf14oiTlxrxQ==}
+    dev: false
 
   /callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -1241,8 +1248,8 @@ packages:
       '@vue/server-renderer': 3.3.2(vue@3.3.2)
       '@vue/shared': 3.3.2
 
-  /vuetify@3.3.2(vue@3.3.2):
-    resolution: {integrity: sha512-m/R42di8FlyMaoktUe6k8JbF+A0vbJMpjQrZK7nH1ptK8VinVVQcaw+9m94wlO74IMR+LubxLh5t9I2ZtVCvjw==}
+  /vuetify@3.3.3(vue@3.3.2):
+    resolution: {integrity: sha512-oLpm6L6Zvf4b7Ua8V3INnUkGoxbi04O68ymEbBDLrPFzmIkzAcwd9L/2Ega582PRJnjTBBZapa6KdmosvhVvgA==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'

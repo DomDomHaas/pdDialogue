@@ -1,5 +1,5 @@
 <template>
-  <li class="ma-1 pa-0">
+  <li class="ma-1 pa-0" :id="`${id}_${itemTitle}`">
 <!--    <span class="tf-nc">{{ title }}</span>
 
     <ul v-if="children">
@@ -15,10 +15,12 @@
     </ul>-->
 
 
-    <div class="tf-nc pa-0 shrink" >
+    <div class="tf-nc pa-0 shrink"
+         style="border-radius: 5px; border: 1px white solid;" >
       <v-container class="pa-1"
                    :fluid="true" >
 
+      <!--  clear icon button-->
       <div style="position: absolute; right: -5px; top: -5px; z-index: 10;"
             class="px-1">
         <v-btn class="ma-0"
@@ -26,17 +28,30 @@
                  color="red"
                  size="small"
                  density="compact"
-                 @click="$emit('clearItem', title)"
+                 @click="$emit('clearItem', { id, title: itemTitle })"
         />
+      </div>
+
+        <!--  add icon button-->
+      <div style="position: absolute; right: -5px; bottom: -5px; z-index: 10;"
+           class="pa-1">
+        <v-btn icon="mdi-plus-box"
+               @click="$emit('addItem', { id, title: itemTitle })"
+               size="small"
+               density="comfortable" />
       </div>
 
       <v-row no-gutters
              style="align-items: center;">
         <v-col class="grow pa-0">
-          <v-text-field :model-value="title"
+<!--
+          v-model="itemTitle"
+-->
+          <v-text-field :model-value="itemTitle"
                         label="Dialogue Title"
                         hide-details
                         density="compact"
+                        @blur="itemTitle = $event.target.value"
                         variant="underlined"
                         class="pa-1">
           </v-text-field>
@@ -46,7 +61,8 @@
 
       <v-row no-gutters >
         <v-col >
-          <v-textarea :model-value="text"
+          <v-textarea :model-value="itemText"
+                      @blur="itemText = $event.target.value"
                       label="Text"
                       class="pa-1"
                       hide-details
@@ -61,7 +77,8 @@
              no-gutters
               class="pa-1">
         <v-col >
-          <v-text-field :model-value="next"
+          <v-text-field :model-value="itemNext"
+                        @blur="itemNext = $event.target.value"
                         label="Next Dialogue"
                         density="compact"
                         variant="outlined"
@@ -69,15 +86,6 @@
           </v-text-field>
         </v-col>
       </v-row>
-
-      <div style="position: absolute; right: -5px; bottom: -5px; z-index: 10;"
-           class="pa-1">
-        <v-btn icon="mdi-plus-box"
-               @click="$emit('addItem', title)"
-               size="small"
-               density="comfortable">
-        </v-btn>
-      </div>
 
       </v-container>
 
@@ -87,20 +95,16 @@
 
       <dialogue-item v-if="children"
                      v-for="(dialogue, index) of children"
-                     :title="dialogue.id"
+                     :id="dialogue.id"
+                     :title="dialogue.title"
                      :text="dialogue.text"
                      :next="dialogue.next"
                      :children="dialogue.options"
                      :key="`${title}_child_${index}`"
-                     @addItem="catchAddItem(dialogue.id)"
-                     @clearItem="catchClearItem(dialogue.id)"
+                     @addItem="catchAddItem"
+                     @clearItem="catchClearItem"
+                     @changeProperty="catchPropertyChange"
       />
-
-<!--
-      <li class="ma-1 pa-0">
-        <DialogueItemAdd @addItem="catchAddItem(title)" />
-      </li>
--->
 
     </ul>
 
@@ -108,41 +112,84 @@
 </template>
 
 <script>
-import DialogueItemAdd from "@/components/DialogueItemAdd.vue";
 const DialogueItem = import("@/components/DialogueItem.vue")
 
 export default {
   name: 'DialogueItem',
+  emits: [
+    'addItem',
+    'clearItem',
+    'changeProperty',
+  ],
   props: {
+    id: String,
     title: String,
     text: String,
-    width: {
-      type: Number,
-      default: 200,
-    },
-    height: {
-      type: Number,
-      default: 300,
-    },
     children: {
       type: Array,
       default: undefined,
     },
     next: String,
   },
-  components: {
-    DialogueItemAdd,
-    DialogueItem,
-  },
   computed: {
+    itemTitle: {
+      get() {
+        return this.title;
+      },
+      set(value) {
+        this.changeProperty('title', this.title, value);
+      }
+    },
+    itemText: {
+      get() {
+        return this.text;
+      },
+      set(value) {
+        this.changeProperty('text', this.text, value);
+      }
+    },
+    itemNext: {
+      get() {
+        return this.next;
+      },
+      set(value) {
+        this.changeProperty('next', this.next, value);
+      }
+    },
   },
   methods: {
-    catchAddItem(parent) {
-      this.$emit('addItem', parent)
+    catchAddItem({ id, title }) {
+      this.$emit('addItem', { id, title })
     },
-    catchClearItem(parent) {
-      this.$emit('clearItem', parent)
+    catchClearItem({ id, title }) {
+      this.$emit('clearItem', { id, title })
     },
+    changeProperty(property, oldValue, newValue) {
+      this.catchPropertyChange({
+        id: this.id,
+        title: this.itemTitle,
+        property,
+        oldValue,
+        newValue,
+      });
+    },
+    catchPropertyChange({ id,
+                          title,
+                          property,
+                          oldValue,
+                          newValue,
+                        }) {
+      this.$emit('changeProperty', {
+        id,
+        title,
+        property,
+        oldValue,
+        newValue,
+      });
+    },
+  },
+  components: {
+    DialogueItem,
   },
   data: () => ({
   }),

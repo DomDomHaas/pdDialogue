@@ -3,10 +3,12 @@
                class="pa-2"
                style="border: 1px white solid;"
                >
-    <v-row style="align-items: center;">
-      <v-col cols="10"
+    <v-row align="center">
+
+      <v-col cols="8"
              class="flex-grow-1 flex-shrink-1">
-        <v-text-field :model-value="name"
+        <v-text-field :model-value="chapterName"
+                      @blur="chapterName = $event.target.value"
                       label="Chapter"
                       hide-details
                       density="compact"
@@ -21,15 +23,17 @@
         </v-btn>
       </v-col>
 
-      <v-col class="flex-grow-0 ml-5">
+      <v-col class="flex-shrink-1 flex-grow-0">
         <v-btn icon="mdi-plus-box-multiple"
                density="compact"
                @click="$emit('addChapterItem', name)" >
         </v-btn>
+
       </v-col>
-      <v-col >
+      <v-col class="flex-shrink-0 flex-grow-1">
         Add New Dialogue
       </v-col>
+
     </v-row>
 
     <v-row>
@@ -37,62 +41,22 @@
           v-for="(dialogue, index) of dialogues"
           :id="`tree_${index}`"
           style="display: flex;"
-          class="tf-tree tf-gap-sm">
+          class="tf-tree tf-gap-sm pa-2">
 
-        <dialogue-item :title="dialogue.id"
+        <dialogue-item :id="dialogue.id"
+                       :title="dialogue.title"
                        :text="dialogue.text"
                        :next="dialogue.next"
                        :children="dialogue.options"
                        :key="`tree_${index}`"
                        @addItem="catchAddItem"
+                       @clearItem="catchClearItem"
+                       @changeProperty="catchPropertyChange"
         />
       </ul>
     </v-row>
   </v-container>
 
-<!--
-  <div class="pa-0"
-       style="display: flex; border: 1px white solid;">
-
-    <div class="ma-2" style="display: flex;">
-      <v-text-field :model-value="name"
-                    label="Chapter"
-                    hide-details
-                    density="compact"
-                    variant="outlined"
-                    class="pa-1">
-      </v-text-field>
-
-      <v-btn :icon="expanded ? 'mdi-chevron-down' : 'mdi-chevron-left'"
-             density="compact"
-             @click="expanded = !expanded" >
-      </v-btn>
-
-      <v-btn class="ml-2"
-             icon="mdi-plus-box-multiple"
-             density="compact"
-             @click="$emit('addChapterItem', name)" >
-      </v-btn>
-
-    </div>
-
-    <ul v-if="expanded"
-        v-for="(dialogue, index) of dialogues"
-        :id="`tree_${index}`"
-        style="display: flex;"
-        class="tf-tree tf-gap-sm">
-
-      <dialogue-item :title="dialogue.id"
-                     :text="dialogue.text"
-                     :next="dialogue.next"
-                     :children="dialogue.options"
-                     :key="`tree_${index}`"
-                     @addItem="catchAddItem"
-      />
-    </ul>
-
-  </div>
--->
 
 </template>
 
@@ -103,15 +67,54 @@ export default {
   name: 'DialogueChapter',
   components: { DialogueItem },
   props: {
+    id: String,
     name: String,
     dialogues: Array,
   },
   computed: {
+    chapterName: {
+      get() {
+        return this.name;
+      },
+      set(value) {
+        this.changeChapterProperty('name', this.name, value);
+      }
+    },
   },
   methods: {
-    catchAddItem(parent) {
-      this.$emit('addItem', parent);
+    catchAddItem({ id, title }) {
+      this.$emit('addItem', { chapterName: this.chapterName, id, title });
     },
+    catchClearItem({ id, title }) {
+      this.$emit('clearItem', { chapterName: this.chapterName, id, title });
+    },
+    catchPropertyChange({ id,
+                          title,
+                          property,
+                          oldValue,
+                          newValue,
+                        }) {
+
+      this.$emit('changeProperty', {
+        id,
+        title,
+        property,
+        oldValue,
+        newValue,
+        chapterName: this.name,
+      });
+
+    },
+    changeChapterProperty(property, oldValue, newValue) {
+      this.$emit('changeChapterProperty', {
+        id: this.id,
+        chapterName: this.chapterName,
+        property,
+        oldValue,
+        newValue,
+      })
+    },
+
   },
   data: () => ({
     expanded: true,
