@@ -17,3 +17,6 @@ This template should help get you started developing with Vue 3 in Vite.
 (this is the default port, check if the console shows you a different port)
 ```
 
+## Credits
+Code by Dominik Haas: https://github.com/DomDomHaas/
+Character Icons by JayJay99: https://jayjay99.itch.io/1-bit-portraits

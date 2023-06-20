@@ -1,8 +1,14 @@
 <template>
   <v-container :fluid="true"
                class="pa-2"
-               style="border: 1px white solid;"
+               style="border: 1px gray dashed; border-radius: 5px;"
                >
+    <v-row>
+      <v-col>
+        <CharacterInput :predefined-characters="characters"
+                        @changeChapterProperty="changeChapterProperty"/>
+      </v-col>
+    </v-row>
     <v-row align="center">
 
       <v-col cols="8"
@@ -16,13 +22,6 @@
         </v-text-field>
       </v-col>
 
-      <v-col class="flex-grow-0">
-        <v-btn :icon="expanded ? 'mdi-chevron-down' : 'mdi-chevron-left'"
-               density="compact"
-               @click="expanded = !expanded" >
-        </v-btn>
-      </v-col>
-
       <v-col class="flex-shrink-1 flex-grow-0">
         <v-btn icon="mdi-plus-box-multiple"
                density="compact"
@@ -32,6 +31,13 @@
       </v-col>
       <v-col class="flex-shrink-0 flex-grow-1">
         Add New Dialogue
+      </v-col>
+
+      <v-col class="flex-grow-0">
+        <v-btn :icon="expanded ? 'mdi-chevron-down' : 'mdi-chevron-left'"
+               density="compact"
+               @click="expanded = !expanded" >
+        </v-btn>
       </v-col>
 
     </v-row>
@@ -48,6 +54,8 @@
                        :text="dialogue.text"
                        :next="dialogue.next"
                        :children="dialogue.options"
+                       :character="dialogue.character"
+                       :characters="characters"
                        :key="`tree_${index}`"
                        @addItem="catchAddItem"
                        @clearItem="catchClearItem"
@@ -62,14 +70,15 @@
 
 <script>
 import DialogueItem from "@/components/DialogueItem.vue";
-// const DialogueItem = import("@/components/DialogueItem.vue")
+import CharacterInput from "@/components/CharacterInput.vue";
+
 export default {
   name: 'DialogueChapter',
-  components: { DialogueItem },
   props: {
     id: String,
     name: String,
     dialogues: Array,
+    characters: Array,
   },
   computed: {
     chapterName: {
@@ -112,13 +121,16 @@ export default {
         property,
         oldValue,
         newValue,
-      })
+      });
     },
-
   },
   data: () => ({
     expanded: true,
   }),
+  components: {
+    DialogueItem,
+    CharacterInput,
+  },
 };
 
 </script>

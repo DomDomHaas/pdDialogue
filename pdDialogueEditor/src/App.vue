@@ -127,3 +127,15 @@ header {
 }
 
 </style>
+
+<style>
+/* white connections for the items */
+.tf-tree .tf-nc:after,
+.tf-tree .tf-nc:before,
+.tf-tree .tf-node-content:after,
+.tf-tree .tf-node-content:before,
+.tf-tree li li:before {
+  border-color: #fff;
+}
+
+</style>

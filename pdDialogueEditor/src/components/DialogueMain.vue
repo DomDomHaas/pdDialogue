@@ -19,6 +19,7 @@
         <DialogueChapter :id="chapter.id"
                          :name="chapter.name"
                          :dialogues="chapter.dialogues"
+                         :characters="chapter.characters"
                          @addItem="catchAddItem"
                          @addChapterItem="catchAddChapterItem"
                          @changeChapterProperty="catchChapterPropertyChange"
@@ -129,6 +130,7 @@ export default defineComponent({
       const newChapter = {
         id: chapterList.length,
         name: '',
+        characters: [],
       };
 
       this.addDialogue(newChapter);
@@ -147,7 +149,7 @@ export default defineComponent({
       chapter.dialogues.push({
         id: chapter.dialogues.length,
         title: '',
-        character: '',
+        character: undefined,
         text: '',
         options: [],
       })

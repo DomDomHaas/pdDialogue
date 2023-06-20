@@ -1,22 +1,7 @@
 <template>
-  <li class="ma-1 pa-0" :id="`${id}_${itemTitle}`">
-<!--    <span class="tf-nc">{{ title }}</span>
-
-    <ul v-if="children">
-
-      <dialogue-item v-for="(dialogue, index) of children"
-                     :title="dialogue.id"
-                     :text="dialogue.text"
-                     :children="dialogue.options"
-                     :key="`${title}_child_${index}`"
-      >
-
-      </dialogue-item>
-    </ul>-->
-
-
+  <li class="ma-0 pt-0 px-2" :id="`${id}_${itemTitle}`">
     <div class="tf-nc pa-0 shrink"
-         style="border-radius: 5px; border: 1px white solid;" >
+         style="border-radius: 15px; border: 1px gray solid;" >
       <v-container class="pa-1"
                    :fluid="true" >
 
@@ -56,7 +41,16 @@
                         class="pa-1">
           </v-text-field>
         </v-col>
+      </v-row>
 
+      <v-row v-if="characters"
+             no-gutters >
+        <v-col class="px-1 pb-1">
+          <CharacterSelection :iconId="character?.iconId"
+                              :name="character?.name"
+                              :characters="characters"
+                              @changeCharacter="catchChangeCharacter" />
+        </v-col>
       </v-row>
 
       <v-row no-gutters >
@@ -100,6 +94,7 @@
                      :text="dialogue.text"
                      :next="dialogue.next"
                      :children="dialogue.options"
+                     :character="dialogue.character"
                      :key="`${title}_child_${index}`"
                      @addItem="catchAddItem"
                      @clearItem="catchClearItem"
@@ -112,6 +107,7 @@
 </template>
 
 <script>
+import CharacterSelection from "@/components/CharacterSelection.vue";
 const DialogueItem = import("@/components/DialogueItem.vue")
 
 export default {
@@ -130,6 +126,8 @@ export default {
       default: undefined,
     },
     next: String,
+    character: Object,
+    characters: Array,
   },
   computed: {
     itemTitle: {
@@ -164,6 +162,13 @@ export default {
     catchClearItem({ id, title }) {
       this.$emit('clearItem', { id, title })
     },
+    catchChangeCharacter(name) {
+      const charObj = this.characters.filter((c) => c.name === name)[0] || undefined;
+
+      if (charObj) {
+        this.changeProperty('character', this.character, charObj);
+      }
+    },
     changeProperty(property, oldValue, newValue) {
       this.catchPropertyChange({
         id: this.id,
@@ -189,6 +194,7 @@ export default {
     },
   },
   components: {
+    CharacterSelection,
     DialogueItem,
   },
   data: () => ({
